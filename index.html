@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Khaled Stor</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef2f5;--card:#fff;--ink:#12202b;--mute:#5d6e7b;--line:#d5dde3;--acc:#0b6bcb;--acc-ink:#fff;--ok:#16794f;--bad:#b83232;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e161c;--card:#17222b;--ink:#e8eef2;--mute:#93a3af;--line:#2a3945;--acc:#4da3ff;--acc-ink:#06121e;--ok:#4cc790;--bad:#ff7b7b;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e161c;--card:#17222b;--ink:#e8eef2;--mute:#93a3af;--line:#2a3945;--acc:#4da3ff;--acc-ink:#06121e;--ok:#4cc790;--bad:#ff7b7b;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Cairo,Tahoma,Arial,sans-serif;font-size:16px;line-height:1.5}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10}
+.wrap{max-width:720px;margin:0 auto;padding:12px 14px 40px}
+h1{font-size:30px;font-weight:800;margin:6px 0 2px;letter-spacing:-.5px;direction:ltr;text-align:right}
+.sub{color:var(--mute);margin:0 0 12px;font-size:14px}
+nav{display:flex;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px;position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+nav button{flex:1;border:0;background:none;color:var(--mute);font:inherit;font-weight:600;padding:9px 4px;border-radius:9px;cursor:pointer}
+nav button[aria-selected=true]{background:var(--acc);color:var(--acc-ink)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+section{display:none;margin-top:14px}section.on{display:block}
+input{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%}
+.row{display:flex;gap:8px}.row>*{min-width:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:10px}
+.p{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;text-align:right;cursor:pointer;font:inherit;color:var(--ink)}
+.p b{display:block;font-weight:600}.p span{color:var(--mute);font-size:13px}
+.p .pr{color:var(--acc);font-weight:800;font-size:17px}
+.p.out{opacity:.45}
+.box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:12px}
+.line{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--line)}
+.line:last-child{border-bottom:0}.line .n{flex:1;min-width:0}
+.q{display:flex;align-items:center;gap:6px}
+.q button{width:34px;height:34px;border-radius:9px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;font-size:18px;cursor:pointer}
+.tot{display:flex;justify-content:space-between;align-items:center;font-size:22px;font-weight:800;margin:10px 0}
+.btn{width:100%;border:0;border-radius:12px;padding:13px;font:inherit;font-weight:800;font-size:17px;background:var(--ok);color:#fff;cursor:pointer}
+.btn.alt{background:none;border:1px solid var(--line);color:var(--mute);font-weight:600;font-size:15px;margin-top:8px;padding:9px}
+.btn:disabled{opacity:.4;cursor:default}
+.x{border:0;background:none;color:var(--bad);font:inherit;cursor:pointer;padding:6px}
+.empty{color:var(--mute);text-align:center;padding:22px 8px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stats div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px}
+.stats small{color:var(--mute)}.stats b{display:block;font-size:24px;font-weight:800}
+.muted{color:var(--mute);font-size:13px}
+#login{position:fixed;inset:0;z-index:20;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px}#login[hidden]{display:none}#login .box{width:100%;max-width:360px}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Khaled Stor</h1>
+<p class="sub">كاشير المحل · <span id="sync">على الجهاز ده بس</span> · <button class="x" id="out" style="padding:0">خروج</button></p>
+<nav role="tablist">
+<button role="tab" data-t="sell" aria-selected="true">بيع</button>
+<button role="tab" data-t="prod" aria-selected="false">المنتجات</button>
+<button role="tab" data-t="day" aria-selected="false">مبيعات النهارده</button>
+</nav>
+
+<section id="sell" class="on">
+<input id="q" placeholder="دوّر على منتج…" autocomplete="off">
+<div class="grid" id="grid"></div>
+<div class="box">
+<div id="cart"></div>
+<div class="row" style="margin-top:8px;align-items:center"><span>خصم</span><input id="disc" type="number" inputmode="decimal" min="0" placeholder="0"></div>
+<div class="tot"><span>الإجمالي</span><span id="total">0</span></div>
+<button class="btn" id="done" disabled>تم البيع</button>
+<button class="btn alt" id="clear">مسح الفاتورة</button>
+</div>
+</section>
+
+<section id="prod">
+<div class="box" style="margin-top:0">
+<input id="pn" placeholder="اسم المنتج (مثلاً: شاحن سامسونج)">
+<div class="row" style="margin-top:8px">
+<input id="pp" type="number" inputmode="decimal" min="0" placeholder="السعر">
+<input id="ps" type="number" inputmode="numeric" min="0" placeholder="الكمية">
+</div>
+<button class="btn" id="add" style="margin-top:10px;background:var(--acc);color:var(--acc-ink)">ضيف المنتج</button>
+</div>
+<div class="box" id="plist"></div>
+</section>
+
+<section id="day">
+<div class="stats"><div><small>إجمالي النهارده</small><b id="dsum">0</b></div><div><small>عدد الفواتير</small><b id="dcnt">0</b></div></div>
+<div class="box" id="slist"></div>
+</section>
+</div>
+<div id="login" hidden><div class="box"><h1 style="text-align:center">Khaled Stor</h1>
+<input id="em" type="email" dir="ltr" placeholder="الإيميل" autocomplete="username">
+<input id="pw" type="password" dir="ltr" placeholder="الباسوورد" autocomplete="current-password" style="margin-top:8px">
+<p id="lmsg" class="muted" style="color:var(--bad)"></p>
+<button class="btn" id="lgo" style="background:var(--acc);color:var(--acc-ink)">دخول</button></div></div>
+<div id="toast" role="status"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+const $=s=>document.querySelector(s);
+const K='khaled-stor-v1';
+let S={products:[],sales:[]},cart={};
+try{const r=localStorage.getItem(K);if(r){const d=JSON.parse(r);if(d&&Array.isArray(d.products)&&Array.isArray(d.sales))S=d}}catch(e){}
+function save(){try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}}
+const firebaseConfig={apiKey:"AIzaSyCH0pijO9WfYyFjmT3Raw6Iuvul3VsyV2Y",authDomain:"khaled-stor-17fee.firebaseapp.com",projectId:"khaled-stor-17fee",appId:"1:474755777405:web:71a0d39b0a75677d9f0214"};
+let pRef=null,sRef=null;
+const warn=()=>toast('مفيش اتصال، اتحفظ على الجهاز ده بس');
+async function saveP(){save();if(pRef)try{await pRef.set({list:S.products})}catch(e){warn()}}
+async function saveSale(x){save();if(sRef)try{await sRef.doc(String(x.id)).set(x)}catch(e){warn()}}
+function start(){
+const fdb=firebase.firestore();
+pRef=fdb.doc('shop/products');sRef=fdb.collection('sales');
+pRef.onSnapshot(d=>{if(d.exists){S.products=d.data().list||[];save();render()}$('#sync').textContent='متزامن مع كل الأجهزة'},()=>{});
+sRef.onSnapshot(q=>{S.sales=q.docs.map(d=>d.data()).sort((a,b)=>a.t-b.t);save();render()},()=>{});
+}
+if(firebaseConfig.apiKey==="PASTE"){$('#login').hidden=false;$('#lgo').disabled=true;$('#lmsg').textContent='لسه محتاج تلصق إعدادات Firebase في أول الملف.'}
+else{firebase.initializeApp(firebaseConfig);
+firebase.auth().onAuthStateChanged(u=>{if(u){$('#login').hidden=true;start()}else{$('#login').hidden=false}})}
+$('#lgo').onclick=async()=>{$('#lmsg').textContent='';try{await firebase.auth().signInWithEmailAndPassword($('#em').value.trim(),$('#pw').value)}catch(e){$('#lmsg').textContent='الإيميل أو الباسوورد غلط'}};
+$('#out').onclick=()=>{if(firebase.apps.length)firebase.auth().signOut()};
+const fmt=n=>Number(n||0).toLocaleString('en-US',{maximumFractionDigits:2})+' جنيه';
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('show'),1800)}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
+document.querySelectorAll('nav button').forEach(x=>x.setAttribute('aria-selected',x===b));
+document.querySelectorAll('section').forEach(s=>s.classList.toggle('on',s.id===b.dataset.t));render()});
+
+function sub(){return Object.entries(cart).reduce((a,[id,q])=>{const p=S.products.find(x=>x.id==id);return a+(p?p.price*q:0)},0)}
+function total(){return Math.max(0,sub()-(parseFloat($('#disc').value)||0))}
+
+function render(){
+const q=$('#q').value.trim().toLowerCase();
+const list=S.products.filter(p=>p.name.toLowerCase().includes(q));
+$('#grid').innerHTML=S.products.length?list.map(p=>`<button class="p ${p.stock<=0?'out':''}" data-id="${p.id}"><b>${esc(p.name)}</b><span class="pr">${fmt(p.price)}</span><br><span>${p.stock>0?'المتاح: '+p.stock:'خلصان'}</span></button>`).join(''):'<div class="empty" style="grid-column:1/-1">لسه مفيش منتجات. افتح «المنتجات» وضيف أول منتج.</div>';
+const ids=Object.keys(cart);
+$('#cart').innerHTML=ids.length?ids.map(id=>{const p=S.products.find(x=>x.id==id);return `<div class="line"><div class="n">${esc(p.name)}<div class="muted">${fmt(p.price)}</div></div><div class="q"><button data-m="${id}" aria-label="نقّص">−</button><b>${cart[id]}</b><button data-a="${id}" aria-label="زوّد">+</button></div></div>`}).join(''):'<div class="empty">الفاتورة فاضية. اضغط على منتج عشان تضيفه.</div>';
+$('#total').textContent=fmt(total());
+$('#done').disabled=!ids.length;
+$('#plist').innerHTML=S.products.length?S.products.map(p=>`<div class="line"><div class="n"><b>${esc(p.name)}</b><div class="muted">${fmt(p.price)} · المتاح ${p.stock}</div></div><button class="x" data-s="${p.id}">زوّد كمية</button><button class="x" data-d="${p.id}">امسح</button></div>`).join(''):'<div class="empty">مفيش منتجات لسه.</div>';
+const today=new Date().toDateString();
+const ts=S.sales.filter(s=>new Date(s.t).toDateString()===today).reverse();
+$('#dsum').textContent=fmt(ts.reduce((a,s)=>a+s.total,0));
+$('#dcnt').textContent=ts.length;
+$('#slist').innerHTML=ts.length?ts.map(s=>`<div class="line"><div class="n">${s.items.map(i=>esc(i.name)+' ×'+i.qty).join('، ')}<div class="muted">${new Date(s.t).toLocaleTimeString('ar-EG',{hour:'numeric',minute:'2-digit'})}${s.disc?' · خصم '+fmt(s.disc):''}</div></div><b>${fmt(s.total)}</b></div>`).join(''):'<div class="empty">لسه مفيش بيع النهارده.</div>';
+}
+
+$('#q').oninput=render;$('#disc').oninput=render;
+$('#grid').onclick=e=>{const b=e.target.closest('.p');if(!b)return;const p=S.products.find(x=>x.id==b.dataset.id);
+if(p.stock<=(cart[p.id]||0))return toast('الكمية خلصت');cart[p.id]=(cart[p.id]||0)+1;render()};
+$('#cart').onclick=e=>{const m=e.target.dataset.m,a=e.target.dataset.a;
+if(m){if(--cart[m]<=0)delete cart[m]}
+if(a){const p=S.products.find(x=>x.id==a);if(cart[a]<p.stock)cart[a]++;else toast('الكمية خلصت')}render()};
+$('#clear').onclick=()=>{cart={};$('#disc').value='';render()};
+$('#done').onclick=()=>{
+const items=Object.entries(cart).map(([id,qty])=>{const p=S.products.find(x=>x.id==id);p.stock-=qty;return{name:p.name,price:p.price,qty}});
+const disc=Math.min(parseFloat($('#disc').value)||0,sub());
+const sale={id:Date.now(),t:Date.now(),items,disc,total:total()};
+S.sales.push(sale);saveP();saveSale(sale);cart={};$('#disc').value='';render();toast('اتسجل البيع ✓')};
+$('#add').onclick=()=>{const n=$('#pn').value.trim(),p=parseFloat($('#pp').value),s=parseInt($('#ps').value)||0;
+if(!n||isNaN(p)||p<0)return toast('اكتب الاسم والسعر');
+S.products.push({id:Date.now(),name:n,price:p,stock:s});saveP();
+$('#pn').value=$('#pp').value=$('#ps').value='';render();toast('اتضاف المنتج ✓')};
+$('#plist').onclick=e=>{const s=e.target.dataset.s,d=e.target.dataset.d;
+if(s){const n=parseInt(prompt('كام قطعة جت؟'));if(n>0){S.products.find(x=>x.id==s).stock+=n;saveP();render()}}
+if(d&&confirm('تمسح المنتج ده؟')){S.products=S.products.filter(x=>x.id!=d);delete cart[d];saveP();render()}};
+render();
+</script>
+</body>
+</html>
